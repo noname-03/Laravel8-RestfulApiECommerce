@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Auth\AuthenticationException;
 
 class Handler extends ExceptionHandler
 {
@@ -34,8 +36,31 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->renderable(function (NotFoundHttpException $e, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'code' => 404,
+                    'message' => 'Halaman tidak ditemukan.'
+                ], 404);
+            }
         });
+    }
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        if ($request->expectsJson()) {
+            $json = [
+                'code' => 403,
+                'message' => 'Terlarang! Anda tidak memiliki izin untuk mengakses sumber daya ini'
+            ];
+            return response()
+                ->json($json, 401);
+        }
+        $guard = array_get($exception->guards(), 0);
+        switch ($guard) {
+            default:
+                $login = 'login';
+                break;
+        }
+        return redirect()->guest(route($login));
     }
 }

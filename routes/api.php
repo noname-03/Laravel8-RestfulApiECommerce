@@ -23,7 +23,11 @@ Route::middleware('api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware(['api'])->group(function () {
-    Route::post('/auth/register', [AuthController::class, 'register'])->name('register');
-    Route::get('/auth/user', [AuthController::class, 'user'])->name('user');
+Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
+    Route::post('register', [AuthController::class, 'register'])->name('register');
+    Route::get('user', [AuthController::class, 'user'])->name('user');
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
+    Route::post('me', [AuthController::class, 'me']);
 });
