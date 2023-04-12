@@ -40,7 +40,7 @@ class Handler extends ExceptionHandler
             if ($request->is('api/*')) {
                 return response()->json([
                     'code' => 404,
-                    'message' => 'Halaman tidak ditemukan.'
+                    'message' => 'Route / Data tidak ditemukan.'
                 ], 404);
             }
         });

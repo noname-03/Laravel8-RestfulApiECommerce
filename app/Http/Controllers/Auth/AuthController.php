@@ -22,7 +22,7 @@ class AuthController extends Controller
             $fileName = time() . '.' . $request->avatar->extension();
             $request->avatar->storeAs('public/images/user', $fileName);
         }
-        User::create([
+        $data = User::create([
             'email' => $request->email,
             'name' => $request->name,
             'password' => bcrypt($request->password),
@@ -37,6 +37,7 @@ class AuthController extends Controller
         return response()->json([
             'code' => '200',
             'message' => 'Registrasi Sukses',
+            'date' => $data
         ], 200);
     }
     public function user()
@@ -62,7 +63,10 @@ class AuthController extends Controller
         $credentials = request(['email', 'password']);
 
         if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json([
+                'code' => '404',
+                'message' => 'Data tidak ditemukan'
+            ], 404);
         }
 
         return $this->respondWithToken($token);
@@ -77,7 +81,10 @@ class AuthController extends Controller
     {
         auth()->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json([
+            'code' => '200',
+            'message' => 'Berhasil keluar',
+        ], 200);
     }
 
     public function refresh()
