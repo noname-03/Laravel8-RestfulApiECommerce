@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,10 +25,8 @@ Route::middleware('api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(['middleware' => 'auth:api'], function ($router) {
-    // route group prefix
+Route::group(['middleware' => 'api'], function ($router) {
     Route::group(['prefix' => 'auth'], function () {
-        // route group prefix
         Route::post('register', [AuthController::class, 'register'])->name('register');
         Route::get('user', [AuthController::class, 'user'])->name('user');
         Route::post('login', [AuthController::class, 'login']);
@@ -41,5 +40,10 @@ Route::group(['middleware' => 'auth:api'], function ($router) {
         Route::get('categories/{id}', [CategoryController::class, 'show']);
         Route::patch('categories/{id}/update', [CategoryController::class, 'update']);
         Route::delete('categories/{id}', [CategoryController::class, 'destroy']);
+        Route::get('product', [ProductController::class, 'index']);
+        Route::post('product', [ProductController::class, 'store']);
+        Route::get('product/{id}', [ProductController::class, 'show']);
+        Route::patch('product/{id}/update', [ProductController::class, 'update']);
+        Route::delete('product/{id}', [ProductController::class, 'destroy']);
     });
 });
