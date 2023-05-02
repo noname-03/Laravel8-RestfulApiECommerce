@@ -20,7 +20,7 @@ class AuthController extends Controller
         $fileName = '';
         if ($request->hasFile('avatar')) {
             $fileName = time() . '.' . $request->avatar->extension();
-            $request->avatar->storeAs('public/images/user', $fileName);
+            $request->avatar->move(public_path('images/user/'), $fileName);
         }
         $data = User::create([
             'email' => $request->email,
@@ -45,7 +45,7 @@ class AuthController extends Controller
         $users = User::all();
         $users->map(function ($obj) {
             if ($obj->avatar) {
-                $obj['avatar'] = asset('storage/images/user/' . $obj->avatar);
+                $obj['avatar'] = asset('images/user/' . $obj->avatar);
                 return $obj;
             } else {
                 $obj['avatar'] = null;
@@ -74,7 +74,10 @@ class AuthController extends Controller
 
     public function me()
     {
-        return response()->json(auth()->user());
+        // $user = response()->json(auth()->user());
+        $user = auth()->user();
+        $user['avatar'] = asset('images/user/' . $user->avatar);
+        return response()->json($user);
     }
 
     public function logout()
