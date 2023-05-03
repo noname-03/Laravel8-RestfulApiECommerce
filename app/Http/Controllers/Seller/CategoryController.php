@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Seller;
 
-use App\Http\Requests\Category\CategoryStoreRequest;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Category;
+use App\Http\Requests\Category\CategoryStoreRequest;
 
 class CategoryController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api');
+        // $this->middleware('role:admin', ['only' => ['show']]); //show hanya bisa admin
     }
     public function index()
     {
@@ -67,5 +67,4 @@ class CategoryController extends Controller
             'data' => $category,
         ]);
     }
-
 }

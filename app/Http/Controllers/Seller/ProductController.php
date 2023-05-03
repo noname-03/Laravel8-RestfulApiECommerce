@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Seller;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 
@@ -74,14 +75,26 @@ class ProductController extends Controller
 
     public function update(Request $request, $id)
     {
-        $category = auth()->user()->categories()->findOrFail($id);
-        $category->update([
+        $user = auth()->user();
+        $products = auth()->user()->products()->findOrFail($id);
+        $fileName = '';
+        if ($request->hasFile('photo')) {
+            $fileName = time() . '.' . $request->photo->extension();
+            $request->photo->move(public_path('images/product/'), $fileName);
+        }
+        $products->update([
+            'user_id' => $user->id,
             'name' => $request->name,
+            'price' => $request->price,
+            'price_retail' => $request->price_retail,
+            'qty' => $request->qty,
+            'description' => $request->description,
+            'photo' => $fileName,
         ]);
         return response()->json([
             'code' => '200',
             'message' => 'Produk berhasil diubah',
-            'data' => $category,
+            'data' => $products,
         ]);
     }
 
